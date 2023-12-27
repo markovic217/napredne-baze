@@ -14,7 +14,7 @@ export default function Root() {
     height: "100vh",
   }));
   const navigate = useNavigate();
-  const { loggedUser, setLoggedUser } = useContext(UserContext);
+  const { loggedUser } = useContext(UserContext);
   useEffect(() => {
     if (loggedUser.isLogged) navigate("/home");
     else navigate("/login");

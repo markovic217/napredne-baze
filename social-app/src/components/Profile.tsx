@@ -1,9 +1,8 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { Avatar, Box, Button, Grid, Paper, Typography } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import {  Box, Button, Grid, Paper, Typography } from "@mui/material";
+import {  useParams } from "react-router-dom";
 import { postClient, userClient } from "../api";
 import { UserContext } from "../App";
-import PageCard from "./PageCard";
 import PostMini from "./PostMini";
 import PageAdd from "./PageAdd";
 
@@ -13,13 +12,9 @@ interface ProfileProps {
 
 const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
   const { username } = useParams();
-  const navigate = useNavigate();
-  const [numberArray, setNumberArray] = useState<any[]>([]);
-  const [search, setSearch] = useState("");
   const [posts, setPosts] = useState<any[]>([]);
-  const [sort, setSort] = useState("Likes");
   const [open, setOpen] = React.useState(false);
-  const [_, refetch] = useState<number>(1);
+  const [, refetch] = useState<number>(1);
   const [postNum, setPostNum] = useState<number>(0);
   const [followerNum, setFollowerNum] = useState<number>(0);
   const [followsNum, setFollowsNum] = useState<number>(0);
@@ -44,7 +39,7 @@ const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
       setIsFollowing(isFollowingTemp);
     };
     fetch();
-  }, [sort, open, _]);
+  }, [open]);
 
   return (
     <>

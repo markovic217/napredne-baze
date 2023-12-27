@@ -48,7 +48,7 @@ const PageAdd: FC<PageAddProps> = ({ open, handleClose }) => {
     descriptionConfirm: false,
   });
   const [description, setDescription] = useState("");
-  const [files, setFiles] = useState<any[]>([]);
+  const [files] = useState<any[]>([]);
   const { loggedUser } = useContext(UserContext);
 
   return (

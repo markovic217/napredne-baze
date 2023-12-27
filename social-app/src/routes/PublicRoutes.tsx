@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import LoginComponent from "../components/LoginComponent";
+import LoginPage from "../components/LoginPage";
 import RegisterComponent from "../components/RegisterComponent";
 import Root from "../components/Root";
 
@@ -9,9 +9,9 @@ const PublicRoutes = () => {
       path: "/",
       element: <Root />,
       children: [
-        { path: "/login", element: <LoginComponent /> },
+        { path: "/login", element: <LoginPage /> },
         { path: "/register", element: <RegisterComponent /> },
-        { path: "*", element: <Navigate to="/login" /> }
+        { path: "*", element: <Navigate to="/login" /> },
       ],
     },
   ];

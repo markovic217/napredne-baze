@@ -5,7 +5,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import LoginComponent from "../components/LoginComponent";
+import LoginPage from "../components/LoginPage";
 import PublicRoutes from "./PublicRoutes";
 import PrivateRoutes from "./PrivateRoutes";
 

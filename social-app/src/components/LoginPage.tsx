@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import {
   Button,
   Card,
@@ -10,20 +10,18 @@ import {
 import { useNavigate } from "react-router-dom";
 import { userClient } from "../api";
 import { UserContext } from "../App";
-import { ApiException, UserClient } from "../api/ClientAPI";
-import axios from "axios";
+
 //import { postAuthProtected, postLoginGuest, postLoginUser } from "../AppAPI";
 //import { UserContext } from "../App";
 
-interface LoginComponentProps {}
+interface LoginPageProps {}
 
-const LoginComponent: FC<LoginComponentProps> = () => {
+const LoginPage: FC<LoginPageProps> = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { loggedUser, setLoggedUser } = useContext(UserContext);
+  const { setLoggedUser } = useContext(UserContext);
 
-  
   const handleUsernameChange = (event: any) => {
     setUsername(event.target.value);
   };
@@ -56,7 +54,6 @@ const LoginComponent: FC<LoginComponentProps> = () => {
     navigate("../register");
   };
 
-  
   return (
     <Card
       sx={{
@@ -110,4 +107,4 @@ const LoginComponent: FC<LoginComponentProps> = () => {
   );
 };
 
-export default LoginComponent;
+export default LoginPage;

@@ -13,7 +13,7 @@ import {
   IconButton,
   CardActions,
 } from "@mui/material";
-import LikeCommentComponent from "./LikeCommentComponent";
+import LikeButton from "./LikeButton";
 import ClearIcon from "@mui/icons-material/Clear";
 import { UserContext } from "../App";
 import { postClient } from "../api";
@@ -90,7 +90,7 @@ const PostMini: FC<PostMiniProps> = ({
             {isYourProfile ? (
               <Typography padding="10px">Likes: {numberOfLikes}</Typography>
             ) : (
-              <LikeCommentComponent initialLikes={0} commentId={commentId} />
+              <LikeButton initialLikes={0} commentId={commentId} />
             )}
           </Box>
         </CardActions>

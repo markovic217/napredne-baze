@@ -1,4 +1,4 @@
-import React, { FC, useContext, useReducer, useState } from "react";
+import React, { FC, useReducer, useState } from "react";
 import {
   Button,
   Card,
@@ -10,7 +10,6 @@ import {
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 
-import { UserContext } from "../App";
 import { userClient } from "../api";
 
 interface RegisterComponentProps {}
@@ -103,7 +102,7 @@ const RegisterComponent: FC<RegisterComponentProps> = () => {
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { loggedUser } = useContext(UserContext);
+
   const navigate = useNavigate();
 
   const handleUsernameChange = (event: any) => {

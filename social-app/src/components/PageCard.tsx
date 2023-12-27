@@ -6,7 +6,7 @@ import {
   Box,
   CardActions,
 } from "@mui/material";
-import LikeCommentComponent from "./LikeCommentComponent";
+import LikeButton from "./LikeButton";
 
 interface PageCardProps {
   commentId: number;
@@ -17,14 +17,12 @@ interface PageCardProps {
   handleDelete: () => void;
 }
 
-
 const PageCard: FC<PageCardProps> = ({
   commentId,
   userAnswered,
   description,
   dateCreated,
 }) => {
-
   return (
     <Box marginBottom="40px" position={"relative"} width={"100%"}>
       <Box
@@ -48,7 +46,7 @@ const PageCard: FC<PageCardProps> = ({
           </Typography>
         </CardContent>
         <CardActions>
-          <LikeCommentComponent initialLikes={0} commentId={commentId} />
+          <LikeButton initialLikes={0} commentId={commentId} />
         </CardActions>
       </Card>
     </Box>

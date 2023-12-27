@@ -4,17 +4,14 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import { UserContext } from "../App";
-import { postClient } from "./../api/index";
+import { postClient } from "../api/index";
 
-interface LikeCommentComponentProps {
+interface LikeButtonProps {
   commentId: number;
   initialLikes: number;
 }
 
-const LikeCommentComponent: FC<LikeCommentComponentProps> = ({
-  commentId,
-  initialLikes,
-}) => {
+const LikeButton: FC<LikeButtonProps> = ({ commentId, initialLikes }) => {
   const { loggedUser } = useContext(UserContext);
   const [liked, setLiked] = useState(false);
   const [numberOfLikes, setNumberOfLikes] = useState<number>(initialLikes);
@@ -77,4 +74,4 @@ const LikeCommentComponent: FC<LikeCommentComponentProps> = ({
   );
 };
 
-export default LikeCommentComponent;
+export default LikeButton;

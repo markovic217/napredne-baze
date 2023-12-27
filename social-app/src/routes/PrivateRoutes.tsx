@@ -1,7 +1,7 @@
 //import { HomePage } from 'pages/Home';
 
 import { Navigate } from "react-router-dom";
-import QuestionLayoutComponent from "../components/QuestionLayoutComponent";
+import HomePage from "../components/HomePage";
 import Root from "../components/Root";
 import Profile from "../components/Profile";
 
@@ -11,9 +11,12 @@ const PrivateRoutes = () => {
       path: "/",
       element: <Root />,
       children: [
-        { path: "/home", element: <QuestionLayoutComponent /> },
+        { path: "/home", element: <HomePage /> },
         { path: "/profile", element: <Profile isYourProfile={true} /> },
-        { path: "/search-profile/:username", element: <Profile isYourProfile={false} /> },
+        {
+          path: "/search-profile/:username",
+          element: <Profile isYourProfile={false} />,
+        },
         { path: "*", element: <Navigate to="/home" /> },
       ],
     },

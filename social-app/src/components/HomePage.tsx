@@ -1,15 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import QuestionCardComponent from "./QuestionCardComponent";
 import {
   Box,
   Button,
-  FormControl,
-  InputLabel,
-  Link,
-  NativeSelect,
-  TextField,
-  Typography,
 } from "@mui/material";
 import { UserContext } from "../App";
 import { postClient } from "../api";
@@ -18,12 +10,10 @@ import PageCard from "./PageCard";
 interface QuestionsComponentProps {}
 
 const QuestionsComponent: FC<QuestionsComponentProps> = () => {
-  const navigate = useNavigate();
-  const [numberArray, setNumberArray] = useState<any[]>([]);
-  const [search, setSearch] = useState("");
+
   const [posts, setPosts] = useState<any[]>([]);
-  const { kurs, kursId } = useParams();
-  const [sort, setSort] = useState("Likes");
+
+  const [sort] = useState("Likes");
   const [offset, setOffset] = useState(0);
   const { loggedUser } = useContext(UserContext);
 

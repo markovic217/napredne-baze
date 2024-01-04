@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 import { userClient } from "../api";
 
-interface RegisterComponentProps {}
+interface RegisterProps {}
 
 function reducer(state: any, action: any) {
   switch (action.type) {
@@ -86,7 +86,7 @@ function reducer(state: any, action: any) {
   throw Error("Unknown action: " + action.type);
 }
 
-const RegisterComponent: FC<RegisterComponentProps> = () => {
+const Register: FC<RegisterProps> = () => {
   const [formState, dispatch] = useReducer(reducer, {
     usernameTouched: false,
     usernameCorrect: false,
@@ -108,7 +108,7 @@ const RegisterComponent: FC<RegisterComponentProps> = () => {
   const handleUsernameChange = (event: any) => {
     setUsername(event.target.value);
     dispatch({ type: "usernameTouched" });
-    if (event.target.value.length < 6 || event.target.value.length > 15)
+    if (event.target.value.length < 6 || event.target.value.length > 30)
       dispatch({ type: "usernameIncorrect" });
     else dispatch({ type: "usernameCorrect" });
   };
@@ -129,14 +129,19 @@ const RegisterComponent: FC<RegisterComponentProps> = () => {
 
   const handleRegisterClick = async () => {
     try {
-      let message = await userClient.createUser(username, name, surname, password);
-      console.log(message)
+      let message = await userClient.createUser(
+        username,
+        name,
+        surname,
+        password
+      );
+      console.log(message);
+      alert("Registration success!")
       navigate("../login");
+    } catch (e: any) {
+      alert(e.message);
     }
-    catch (e: any) {
-      console.log(e)
-    }
-};
+  };
 
   return (
     <Box
@@ -161,6 +166,7 @@ const RegisterComponent: FC<RegisterComponentProps> = () => {
             Register
           </Typography>
           <TextField
+            
             error={
               !formState.usernameCorrect &&
               formState.usernameTouched &&
@@ -183,7 +189,7 @@ const RegisterComponent: FC<RegisterComponentProps> = () => {
               !formState.usernameCorrect &&
               formState.usernameTouched &&
               !formState.usernameFocus
-                ? "Username mora imati izmedju 6 i 15 karaktera"
+                ? "Username mora imati izmedju 6 i 30 karaktera"
                 : ""
             }
             margin="normal"
@@ -285,4 +291,4 @@ const RegisterComponent: FC<RegisterComponentProps> = () => {
   );
 };
 
-export default RegisterComponent;
+export default Register;

@@ -1,57 +1,62 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import {  Box, Button, Grid, Paper, Typography } from "@mui/material";
-import {  useParams } from "react-router-dom";
+import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import { postClient, userClient } from "../api";
 import { UserContext } from "../App";
-import PostMini from "./PostMini";
-import PageAdd from "./PageAdd";
+import PostMini from "../components/ui/PostMini";
+import PostAdd from "../components/modals/PostAdd";
+import FollowList from "../components/modals/FollowList";
+import { UserEdit } from "../components/modals/UserEdit";
 
 interface ProfileProps {
   isYourProfile: boolean;
 }
 
 const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
+  const navigate = useNavigate();
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
   const { username } = useParams();
   const [posts, setPosts] = useState<any[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [, refetch] = useState<number>(1);
+  const [followOpen, setFollowOpen] = React.useState(false);
+  const [editOpen, setEditOpen] = React.useState(false);
+
+  const [isFollowers, setIsFollowers] = useState(false);
   const [postNum, setPostNum] = useState<number>(0);
   const [followerNum, setFollowerNum] = useState<number>(0);
   const [followsNum, setFollowsNum] = useState<number>(0);
   const [isFollowing, setIsFollowing] = useState<number>(0);
-  const { loggedUser } = useContext(UserContext);
   if (loggedUser.username === username) isYourProfile = true;
   useEffect(() => {
     const fetch = async () => {
       const usernameParam = isYourProfile ? loggedUser.username : username;
-      const postsTemp = await postClient.getPostByUser(usernameParam);
-      const postNumTemp = await postClient.getPostCount(usernameParam);
-      const followerNumTemp = await userClient.getFollowerCount(usernameParam);
-      const followsNumTemp = await userClient.getFollowsCount(usernameParam);
-      const isFollowingTemp = await userClient.getIsFollowing(
+      const posts = await postClient.getPostByUser(usernameParam);
+      const postNum = await postClient.getPostCount(usernameParam);
+      const followerNum = await userClient.getFollowerCount(usernameParam);
+      const followsNum = await userClient.getFollowsCount(usernameParam);
+      const isFollowing = await userClient.getIsFollowing(
         loggedUser.username,
         usernameParam
       );
-      setPosts(postsTemp);
-      setPostNum(postNumTemp);
-      setFollowerNum(followerNumTemp);
-      setFollowsNum(followsNumTemp);
-      setIsFollowing(isFollowingTemp);
+      setPosts(posts);
+      setPostNum(postNum);
+      setFollowerNum(followerNum);
+      setFollowsNum(followsNum);
+      setIsFollowing(isFollowing);
     };
     fetch();
-  }, [open]);
+  }, [open, username, postNum]);
 
   return (
     <>
       <Box
         display="flex"
-        justifyContent="center"
         alignItems="center"
         flexDirection="column"
         style={{ height: "100vh" }}
-        marginTop="250px"
+        marginTop={"100px"}
       >
-        <Box width="100%" marginBottom="40px">
+        <Box minWidth={"600px"} marginBottom="40px">
           <Paper elevation={3} style={{ padding: "20px", textAlign: "center" }}>
             <Typography variant="h5" style={{ margin: "10px 0" }}>
               {isYourProfile ? loggedUser.username : username}
@@ -66,6 +71,36 @@ const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
                 >
                   Add Post
                 </Button>
+                <Button
+                  sx={{
+                    marginLeft: "10px"
+                  }}
+                  color="secondary"
+                  variant="contained"
+                  onClick={() => {
+                    setEditOpen(true);
+                  }}
+                >
+                  Edit User
+                </Button>
+                <Button
+                  sx={{
+                    marginLeft: "10px"
+                  }}
+                  color ="error"
+                  variant="contained"
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to delete your profile?") === true) {
+                      userClient.deleteUser(loggedUser.username)
+                      setLoggedUser({ isLogged: false });
+                      localStorage.removeItem("user");;
+                      navigate("../login");
+                      alert("User deleted!")
+                    } 
+                  }}
+                >
+                  Delete User
+                </Button>
               </>
             ) : (
               <>
@@ -75,7 +110,8 @@ const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
                     style={{ marginRight: "10px" }}
                     onClick={() => {
                       userClient.unfollowUser(loggedUser.username, username);
-                      refetch((prev) => prev + 1);
+                      setIsFollowing(0);
+                      setFollowerNum((prev) => prev - 1);
                     }}
                   >
                     Unfollow
@@ -83,10 +119,12 @@ const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
                 ) : (
                   <Button
                     variant="contained"
-                    style={{ marginRight: "10px" }}
+                    style={{ marginRight: "10px"}}
                     onClick={() => {
                       userClient.followUser(loggedUser.username, username);
-                      refetch((prev) => prev + 1);
+
+                      setFollowerNum((prev) => prev + 1);
+                      setIsFollowing(1);
                     }}
                   >
                     Follow
@@ -104,11 +142,29 @@ const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
                 <Typography variant="h6">Posts</Typography>
                 <Typography variant="subtitle1">{postNum}</Typography>
               </Grid>
-              <Grid item>
+              <Grid
+                onClick={() => {
+                  setIsFollowers(true);
+                  setFollowOpen(true);
+                }}
+                item
+                sx={{
+                  cursor:"pointer"
+                }}
+              >
                 <Typography variant="h6">Followers</Typography>
                 <Typography variant="subtitle1">{followerNum}</Typography>
               </Grid>
-              <Grid item>
+              <Grid
+                onClick={() => {
+                  setIsFollowers(false);
+                  setFollowOpen(true);
+                }}
+                item
+                sx={{
+                  cursor:"pointer"
+                }}  
+              >
                 <Typography variant="h6">Following</Typography>
                 <Typography variant="subtitle1">{followsNum}</Typography>
               </Grid>
@@ -118,27 +174,41 @@ const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
         <Box width="50vw">
           <Grid container spacing={3}>
             {posts.map((post) => (
-              <Grid item xs={12} sm={6} md={4} key={post.commentId}>
+              <Grid item xs={12} sm={6} md={4} key={post.id}>
                 <PostMini
                   dateCreated={post.properties.date}
                   description={post.properties.text}
-                  commentId={post.id}
+                  postId={post.id}
                   handleDelete={() => {
-                    refetch((prev) => prev + 1);
+                    setPostNum(prev=> prev-1)
                   }}
                   isYourProfile={isYourProfile}
-                  key={post.id}
+                  //key={post.postId}
                 />
               </Grid>
             ))}
           </Grid>
         </Box>
       </Box>
-      <PageAdd
+      <PostAdd
         open={open}
         handleClose={() => {
           setOpen(false);
-          refetch((prev) => prev + 1);
+          setPostNum((prev) => prev + 1);
+        }}
+      />
+      <FollowList
+        username={isYourProfile ? loggedUser.username : username}
+        isFollowers={isFollowers}
+        open={followOpen}
+        handleClose={() => {
+          setFollowOpen(false);
+        }}
+      />
+      <UserEdit
+        open={editOpen}
+        handleClose={() => {
+          setEditOpen(false)
         }}
       />
     </>

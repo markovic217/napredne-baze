@@ -1,16 +1,12 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { UserContext } from "../App";
 import { postClient } from "../api";
-import PageCard from "./PageCard";
+import PostCard from "../components/ui/PostCard";
 
-interface QuestionsComponentProps {}
+interface HomePage {}
 
-const QuestionsComponent: FC<QuestionsComponentProps> = () => {
-
+const HomePage: FC<HomePage> = () => {
   const [posts, setPosts] = useState<any[]>([]);
 
   const [sort] = useState("Likes");
@@ -28,10 +24,9 @@ const QuestionsComponent: FC<QuestionsComponentProps> = () => {
       if (postsTemp.length <= offset) setMorePosts(false);
       setPosts((prev) => [...prev, ...postsTemp]);
 
-      console.log(postsTemp);
     };
     fetch();
-  }, [sort, offset]);
+  }, [sort, offset, loggedUser]);
 
   return (
     <Box
@@ -49,11 +44,11 @@ const QuestionsComponent: FC<QuestionsComponentProps> = () => {
       }}
     >
       {posts.map((post) => (
-        <PageCard
+        <PostCard
           dateCreated={post.date}
           description={post.text}
           userAnswered={post.username}
-          commentId={post.id}
+          postId={post.id}
           userId={0}
           handleDelete={() => {}}
           key={post.id}
@@ -73,4 +68,4 @@ const QuestionsComponent: FC<QuestionsComponentProps> = () => {
   );
 };
 
-export default QuestionsComponent;
+export default HomePage;

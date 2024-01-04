@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace APITest
+﻿namespace APITest.Server
 {
     [TestFixture]
-    internal class PostErrorTest
+    internal class UserErrorTest
     {
         int suffix;
-        int postId;
         HttpClient client;
-        string date;
 
         [OneTimeSetUp]
         public void SetUp()
@@ -20,42 +12,39 @@ namespace APITest
             Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
             suffix = rnd.Next();
-            date = DateTime.Now.ToString("yyyy-MM-dd");
             client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/User/") };
 
             string postData =
-                $"username=testUsername{suffix}&name=testName&surname=testSurname&password=password";
+                $"username=errorTestUsername{suffix}&name=testName&surname=testSurname&password=password";
+
+            using HttpResponseMessage response = client
+                .PostAsync($"CreateUser?{postData}", null)
+                .Result;
+            if (!response.IsSuccessStatusCode)
+                Assert.Fail();
+        }
+
+        [Test, Order(1)]
+        [TestCase(Description = "PostUser Test")]
+        public void TestPost()
+        {
+            string postData =
+                $"username=errorTestUsername{suffix}&name=testName&surname=testSurname&password=password";
 
             using HttpResponseMessage response = client
                 .PostAsync($"CreateUser?{postData}", null)
                 .Result;
 
-            if (!response.IsSuccessStatusCode)
-                Assert.Fail();
-
-            client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/Post/") };
-        }
-
-        [Test, Order(1)]
-        [TestCase(Description = "CreatePost Test")]
-        public void TestPost()
-        {
-            string postData = $"username=errorTestUsername{suffix}&text=testText&date={date}";
-
-            using HttpResponseMessage response = client
-                .PostAsync($"CreatePost?{postData}", null)
-                .Result;
-
-            if (response.StatusCode != HttpStatusCode.NotFound)
+            if (response.StatusCode != HttpStatusCode.Conflict)
                 Assert.Fail();
         }
 
         [Test, Order(2)]
-        [TestCase(Description = "GetPosts Test")]
+        [TestCase(Description = "GetUser Test")]
         public void TestGet()
         {
             using HttpResponseMessage response = client
-                .GetAsync($"GetPosts?username=errorTestUsername{suffix}")
+                .GetAsync($"GetUser?username=notFoundUsername{suffix}&password=password")
                 .Result;
 
             if (response.StatusCode != HttpStatusCode.NotFound)
@@ -63,23 +52,28 @@ namespace APITest
         }
 
         [Test, Order(3)]
-        [TestCase(Description = "UpdatePost Test")]
+        [TestCase(Description = "UpdateUser Test")]
         public void TestUpdate()
         {
-            string patchData = $"username=errorTestUsername{suffix}&newText=newTestText";
+            string patchData =
+                $"username=notFoundUsername{suffix}&newUsername=notFoundUsername{suffix}&name=newTestName&surname=newTestSurname";
 
             using HttpResponseMessage response = client
-                .PatchAsync($"UpdatePost?{patchData}", null)
+                .PatchAsync($"UpdateUser?{patchData}", null)
                 .Result;
+
             if (response.StatusCode != HttpStatusCode.NotFound)
                 Assert.Fail();
         }
 
         [Test, Order(4)]
-        [TestCase(Description = "DeletePost Test")]
+        [TestCase(Description = "DeleteUser Test")]
         public void TestDelete()
         {
-            using HttpResponseMessage response = client.DeleteAsync($"DeletePost?id={-1}").Result;
+            using HttpResponseMessage response = client
+                .DeleteAsync($"DeleteUser?username=notFoundUsername{suffix}")
+                .Result;
+
             if (response.StatusCode != HttpStatusCode.NotFound)
                 Assert.Fail();
         }
@@ -87,10 +81,8 @@ namespace APITest
         [OneTimeTearDown]
         public void TearDown()
         {
-            client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/User/") };
-
             using HttpResponseMessage response = client
-                .DeleteAsync($"DeleteUser?username=testUsername{suffix}")
+                .DeleteAsync($"DeleteUser?username=errorTestUsername{suffix}")
                 .Result;
 
             if (!response.IsSuccessStatusCode)

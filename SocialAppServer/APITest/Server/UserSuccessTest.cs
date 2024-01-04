@@ -1,4 +1,4 @@
-﻿namespace SocialAppServer.Test
+﻿namespace APITest.Server
 {
     [TestFixture]
     internal class UserSuccessTest

@@ -1,15 +1,9 @@
 import { FC } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  CardActions,
-} from "@mui/material";
+import { Card, CardContent, Typography, Box, CardActions } from "@mui/material";
 import LikeButton from "./LikeButton";
 
-interface PageCardProps {
-  commentId: number;
+interface PostCardProps {
+  postId: number;
   userId: number;
   userAnswered: string;
   description: string;
@@ -17,8 +11,8 @@ interface PageCardProps {
   handleDelete: () => void;
 }
 
-const PageCard: FC<PageCardProps> = ({
-  commentId,
+const PostCard: FC<PostCardProps> = ({
+  postId,
   userAnswered,
   description,
   dateCreated,
@@ -46,11 +40,11 @@ const PageCard: FC<PageCardProps> = ({
           </Typography>
         </CardContent>
         <CardActions>
-          <LikeButton initialLikes={0} commentId={commentId} />
+          <LikeButton initialLikes={0} postId={postId} />
         </CardActions>
       </Card>
     </Box>
   );
 };
 
-export default PageCard;
+export default PostCard;

@@ -1,7 +1,8 @@
 import { Navigate } from "react-router-dom";
-import LoginPage from "../components/LoginPage";
-import RegisterComponent from "../components/RegisterComponent";
-import Root from "../components/Root";
+import LoginPage from "../pages/LoginPage";
+import Register from "../pages/Register";
+import Root from "./Root";
+import Container from "../components/ui/LayoutContainer";
 
 const PublicRoutes = () => {
   return [
@@ -9,8 +10,22 @@ const PublicRoutes = () => {
       path: "/",
       element: <Root />,
       children: [
-        { path: "/login", element: <LoginPage /> },
-        { path: "/register", element: <RegisterComponent /> },
+        {
+          path: "/login",
+          element: (
+            <Container>
+              <LoginPage />
+            </Container>
+          ),
+        },
+        {
+          path: "/register",
+          element: (
+            <Container>
+              <Register />
+            </Container>
+          ),
+        },
         { path: "*", element: <Navigate to="/login" /> },
       ],
     },

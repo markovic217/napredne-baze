@@ -3,15 +3,15 @@ import React, { FC, useContext, useEffect, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
-import { UserContext } from "../App";
-import { postClient } from "../api/index";
+import { UserContext } from "../../App";
+import { postClient } from "../../api/index";
 
 interface LikeButtonProps {
-  commentId: number;
+  postId: number;
   initialLikes: number;
 }
 
-const LikeButton: FC<LikeButtonProps> = ({ commentId, initialLikes }) => {
+const LikeButton: FC<LikeButtonProps> = ({ postId, initialLikes }) => {
   const { loggedUser } = useContext(UserContext);
   const [liked, setLiked] = useState(false);
   const [numberOfLikes, setNumberOfLikes] = useState<number>(initialLikes);
@@ -20,37 +20,31 @@ const LikeButton: FC<LikeButtonProps> = ({ commentId, initialLikes }) => {
       const fetch = async () => {
         const liked = await postClient.getUserLiked(
           loggedUser.username,
-          commentId
+          postId
         );
         if (liked) setLiked(true);
         else setLiked(false);
-        const numOfLikes = await postClient.getNumberOfLikes(commentId);
+        const numOfLikes = await postClient.getNumberOfLikes(postId);
         setNumberOfLikes(numOfLikes);
       };
       fetch();
     },
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [commentId, loggedUser.id]
+    [postId, loggedUser.id]
   );
 
   return (
     <Box
       sx={{
-        // position: "absolute",
-        // left: "-100px",
-        // height: "100%",
-        // width: "100px",
         display: "flex",
-        // flexDirection: "column",
-        // justifyContent: "center",
         alignItems: "center",
       }}
     >
       {liked ? (
         <IconButton
           onClick={async () => {
-            await postClient.unlikePost(loggedUser.username, commentId);
+            await postClient.unlikePost(loggedUser.username, postId);
             setLiked(false);
             setNumberOfLikes(numberOfLikes - 1);
           }}
@@ -61,7 +55,7 @@ const LikeButton: FC<LikeButtonProps> = ({ commentId, initialLikes }) => {
       ) : (
         <IconButton
           onClick={async () => {
-            await postClient.likePost(loggedUser.username, commentId);
+            await postClient.likePost(loggedUser.username, postId);
             setLiked(true);
             setNumberOfLikes(numberOfLikes + 1);
           }}

@@ -1,19 +1,16 @@
-import  { FC, useContext, useReducer, useState } from "react";
+import { FC, useContext, useReducer, useState } from "react";
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
-  Paper,
   TextField,
-  Typography,
 } from "@mui/material";
-import { UserContext } from "../App";
-import { postClient } from "../api";
+import { UserContext } from "../../App";
+import { postClient } from "../../api";
 
-interface PageAddProps {
+interface PostAddProps {
   open: boolean;
   handleClose: () => void;
 }
@@ -42,13 +39,12 @@ function reducer(state: any, action: any) {
   throw Error("Unknown action: " + action.type);
 }
 
-const PageAdd: FC<PageAddProps> = ({ open, handleClose }) => {
+const PostAdd: FC<PostAddProps> = ({ open, handleClose }) => {
   const [formState, dispatch] = useReducer(reducer, {
     descriptionCorrect: false,
     descriptionConfirm: false,
   });
   const [description, setDescription] = useState("");
-  const [files] = useState<any[]>([]);
   const { loggedUser } = useContext(UserContext);
 
   return (
@@ -81,25 +77,6 @@ const PageAdd: FC<PageAddProps> = ({ open, handleClose }) => {
           maxRows={5}
           sx={{ marginRight: "20px" }}
         />
-        <Grid
-          container
-          rowSpacing={2}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          marginTop="15px"
-        >
-          {files.map((file, index) => {
-            return (
-              <Grid item xs={12} sm={6} key={index}>
-                <Paper
-                  elevation={3}
-                  sx={{ padding: "8px", textAlign: "center" }}
-                >
-                  <Typography variant="body2">{file.name}</Typography>
-                </Paper>
-              </Grid>
-            );
-          })}
-        </Grid>
       </DialogContent>
       <DialogActions sx={{}} disableSpacing>
         <Button
@@ -134,4 +111,4 @@ const PageAdd: FC<PageAddProps> = ({ open, handleClose }) => {
   );
 };
 
-export default PageAdd;
+export default PostAdd;

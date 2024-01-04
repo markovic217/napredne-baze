@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -20,7 +20,12 @@ const LoginPage: FC<LoginPageProps> = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { setLoggedUser } = useContext(UserContext);
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
+
+  useEffect(() => {
+    if (loggedUser.isLogged)
+      navigate("../home")
+  },[])
 
   const handleUsernameChange = (event: any) => {
     setUsername(event.target.value);
@@ -32,22 +37,20 @@ const LoginPage: FC<LoginPageProps> = () => {
 
   const handleLoginClick = async () => {
     try {
-      //console.log(username)
-      let user = await userClient.getUser(username, password);
+      let user:any = await userClient.getUser(username, password);
       setLoggedUser({
         isLogged: true,
         username: user.properties?.username,
         name: user.properties?.name,
         surname: user.properties?.surname,
       });
-      console.log(user);
+
       localStorage.setItem("user", JSON.stringify(user));
       navigate("../home");
     } catch (e: any) {
-      console.log(e.message);
+      alert(e.message);
     }
 
-    //console.log(await userClient.getUser(username, password));
   };
 
   const handleRegisterClick = () => {

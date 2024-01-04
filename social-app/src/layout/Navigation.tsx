@@ -10,13 +10,13 @@ import {
 import { Container } from "@mui/system";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "./../App";
+import { UserContext } from "../App";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import { userClient } from "../api";
 
-interface NavigationComponentProps {}
-const NavigationComponent: FC<NavigationComponentProps> = () => {
+interface NavigationProps {}
+const Navigation: FC<NavigationProps> = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [anchorText, setAnchorText] = useState<null | HTMLElement>(null);
@@ -24,16 +24,16 @@ const NavigationComponent: FC<NavigationComponentProps> = () => {
   const open = Boolean(anchorEl);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState<any[]>([]);
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
+
   const handleSearchChange = async (event: any) => {
     setSearch(event.target.value);
     setAnchorText(event.target.value ? event.currentTarget : null);
-    console.log(event.target.value);
     try {
       const searchResultTemp = await userClient.searchUsers(
         event.target.value.toString()
       );
       setSearchResult(searchResultTemp);
-      console.log(searchResultTemp);
     } catch (e) {
       console.log(e);
     }
@@ -52,7 +52,6 @@ const NavigationComponent: FC<NavigationComponentProps> = () => {
   useEffect(() => {
     return () => {};
   }, []);
-  const { loggedUser, setLoggedUser } = useContext(UserContext);
   return (
     <>
       <Box
@@ -73,7 +72,7 @@ const NavigationComponent: FC<NavigationComponentProps> = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "20px",
+            minHeight: "80px",
           }}
         >
           <Link
@@ -85,38 +84,41 @@ const NavigationComponent: FC<NavigationComponentProps> = () => {
           >
             SocialApp
           </Link>
-          {loggedUser.isLogged && (<Box>
-            <TextField
-              label="Search"
-              variant="outlined"
-              value={search}
-              onChange={handleSearchChange}
-              margin="normal"
-            />
-            <Paper
-              sx={{
-                display: Boolean(anchorText) ? "block" : "none",
-                position: "absolute",
-                zIndex: 5,
-                overflowY: "scroll",
-                whiteSpace: "nowrap",
-                maxHeight: "300px",
-              }}
-            >
-              {searchResult?.map((user, index) => {
-                return (
-                  <MenuItem
-                    onClick={() => {
-                      handleCloseText(user.properties.username);
-                    }}
-                    sx={{ width: "100%" }}
-                  >
-                    {user.properties.username}
-                  </MenuItem>
-                );
-              })}
-            </Paper>
-          </Box>)}
+          {loggedUser.isLogged && (
+            <Box>
+              <TextField
+                label="Search"
+                variant="outlined"
+                value={search}
+                onChange={handleSearchChange}
+                margin="normal"
+              />
+              <Paper
+                sx={{
+                  display: Boolean(anchorText) ? "block" : "none",
+                  position: "absolute",
+                  zIndex: 5,
+                  overflowY: "scroll",
+                  whiteSpace: "nowrap",
+                  maxHeight: "300px",
+                }}
+              >
+                {searchResult?.map((user, index) => {
+                  return (
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseText(user.properties.username);
+                      }}
+                      sx={{ width: "100%" }}
+                      key={index}
+                    >
+                      {user.properties.username}
+                    </MenuItem>
+                  );
+                })}
+              </Paper>
+            </Box>
+          )}
           <Box sx={{ display: "flex", position: "relative" }}>
             <Link
               variant="h6"
@@ -163,12 +165,22 @@ const NavigationComponent: FC<NavigationComponentProps> = () => {
           >
             <MenuItem
               onClick={() => {
+                handleClose();
                 navigate("/profile");
               }}
             >
               User: {loggedUser?.username}
             </MenuItem>
-
+            {loggedUser?.isLogged && (
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  navigate("../inbox");
+                }}
+              >
+                Inbox
+              </MenuItem>
+            )}
             <MenuItem
               onClick={() => {
                 setLoggedUser({ isLogged: false });
@@ -195,4 +207,4 @@ const NavigationComponent: FC<NavigationComponentProps> = () => {
   );
 };
 
-export default NavigationComponent;
+export default Navigation;

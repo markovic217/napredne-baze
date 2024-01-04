@@ -1,9 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Microsoft.AspNet.SignalR.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ServiceStack.Redis;
+using SocialAppServer.Config;
 using SocialAppServer.Models;
 
 namespace SocialAppServer.Controllers
@@ -13,17 +18,30 @@ namespace SocialAppServer.Controllers
     public class PostController : ControllerBase
     {
         private readonly IDriver _driver;
+        RedisClient redisClient;
 
         public PostController()
         {
             _driver = Neo4JDriver.driver;
+            redisClient = new RedisClient(RedisConnection.Connection);
         }
 
         [HttpGet]
         [Route("GetPosts")]
         public async Task<ActionResult<Post[]>> GetPostByUser(string username)
         {
-            var records = new List<object>();
+            var keys = redisClient.SearchKeys($"{username}:*");
+            if (keys.Any())
+            {
+                List<Post> postList = redisClient
+                    .GetAll<Post>(keys)
+                    .Values.OrderByDescending(post => post.Properties.Date)
+                    .ToList();
+
+                return Ok(postList);
+            }
+
+            var records = new List<Post>();
             var session = _driver.AsyncSession();
 
             IResultCursor results = await session.RunAsync(
@@ -38,9 +56,22 @@ namespace SocialAppServer.Controllers
             results = await session.RunAsync(
                 $"MATCH (u:User {{username: '{username}'}})-[rel:POSTED]->(post:Post) RETURN post"
             );
+
             while (await results.FetchAsync())
             {
-                records.Add(results.Current.Values["post"]);
+                var properties = results.Current.Values["post"].As<INode>().Properties;
+                var id = results.Current.Values["post"].As<INode>().Id;
+                Post post = new Post()
+                {
+                    Id = (int)id,
+                    Properties = new PostProperties()
+                    {
+                        Date = properties["date"].ToString(),
+                        Text = properties["text"].ToString()
+                    }
+                };
+                records.Add(post);
+                redisClient.Add($"{username}:{id}", post, new TimeSpan(0, 15, 0));
             }
 
             return Ok(records);
@@ -123,14 +154,31 @@ namespace SocialAppServer.Controllers
         {
             var statementText = new StringBuilder();
             statementText.Append(
-                $"MATCH (u:User {{username: '{username}'}}) CREATE (p:Post {{text: '{text}', date: '{date.Year}-{date.Month}-{date.Day}'}}) CREATE (u)-[rel:POSTED]->(p) return u"
+                $"MATCH (user:User {{username: '{username}'}}) CREATE (post:Post {{text: '{text}', date: '{date.Year}-{date.Month}-{date.Day}'}}) CREATE (user)-[rel:POSTED]->(post) return user, post"
             );
 
             var session = _driver.AsyncSession();
 
-            var result = await session.RunAsync((statementText.ToString()));
+            var results = await session.RunAsync((statementText.ToString()));
 
-            var resList = await result.ToListAsync();
+            List<object> resList = new List<object>();
+
+            while (await results.FetchAsync())
+            {
+                var properties = results.Current.Values["post"].As<INode>().Properties;
+                var id = results.Current.Values["post"].As<INode>().Id;
+                Post post = new Post()
+                {
+                    Id = (int)id,
+                    Properties = new PostProperties()
+                    {
+                        Date = properties["date"].ToString(),
+                        Text = properties["text"].ToString()
+                    }
+                };
+                resList.Add(post);
+                redisClient.Add($"{username}:{id}", post, new TimeSpan(0, 15, 0));
+            }
 
             if (resList.Count == 0)
                 return NotFound("User has not been found");
@@ -187,6 +235,10 @@ namespace SocialAppServer.Controllers
             if (resList.Count == 0)
                 return NotFound("Post has not been found");
 
+            var post = redisClient.Get<Post>($"{username}:{postId}");
+            post.Properties.Text = newText;
+            redisClient.Set<Post>($"{username}:{postId}", post);
+
             return Ok("Post data has been updated");
         }
 
@@ -225,10 +277,14 @@ namespace SocialAppServer.Controllers
             var resList = await results.ToListAsync();
 
             if (resList.Count == 0)
-                return NotFound("User has not been found");
+                return NotFound("Post has not been found");
 
             results = await session.ExecuteWriteAsync(tx => tx.RunAsync(statementText.ToString()));
-
+            var key = redisClient.SearchKeys($"*:{id}");
+            if (key.Any())
+            {
+                redisClient.Remove(key[0]);
+            }
             return Ok("Post has been deleted!");
         }
     }

@@ -658,6 +658,10 @@ export class UserClient {
             result200 = User.fromJS(resultData200);
             return Promise.resolve<User>(result200);
 
+        } else if (status === 404) {
+            const _responseText = response.data;
+            return throwException("Wrong username or password", status, _responseText, _headers);
+
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -830,6 +834,124 @@ export class UserClient {
         return Promise.resolve<number>(null as any);
     }
 
+    getFollowers(username: string | undefined, cancelToken?: CancelToken | undefined): Promise<User[]> {
+        let url_ = this.baseUrl + "/api/User/GetFollowers?";
+        if (username === null)
+            throw new Error("The parameter 'username' cannot be null.");
+        else if (username !== undefined)
+            url_ += "username=" + encodeURIComponent("" + username) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetFollowers(_response);
+        });
+    }
+
+    protected processGetFollowers(response: AxiosResponse): Promise<User[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(User.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<User[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<User[]>(null as any);
+    }
+
+    getFollows(username: string | undefined, cancelToken?: CancelToken | undefined): Promise<User[]> {
+        let url_ = this.baseUrl + "/api/User/GetFollows?";
+        if (username === null)
+            throw new Error("The parameter 'username' cannot be null.");
+        else if (username !== undefined)
+            url_ += "username=" + encodeURIComponent("" + username) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetFollows(_response);
+        });
+    }
+
+    protected processGetFollows(response: AxiosResponse): Promise<User[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(User.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<User[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<User[]>(null as any);
+    }
+
     getIsFollowing(username: string | undefined, usernameFollow: string | undefined, cancelToken?: CancelToken | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/User/GetIsFollowing?";
         if (username === null)
@@ -887,7 +1009,14 @@ export class UserClient {
         return Promise.resolve<number>(null as any);
     }
 
-    createUser(username: string | undefined, name: string | undefined, surname: string | undefined, password: string | undefined, cancelToken?: CancelToken | undefined): Promise<string> {
+    /**
+     * @param username (optional) 
+     * @param name (optional) 
+     * @param surname (optional) 
+     * @param password (optional) 
+     * @return Sign up successful
+     */
+    createUser(username: string | undefined, name: string | undefined, surname: string | undefined, password: string | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/User/CreateUser?";
         if (username === null)
             throw new Error("The parameter 'username' cannot be null.");
@@ -911,7 +1040,6 @@ export class UserClient {
             method: "POST",
             url: url_,
             headers: {
-                "Accept": "application/json"
             },
             cancelToken
         };
@@ -927,7 +1055,7 @@ export class UserClient {
         });
     }
 
-    protected processCreateUser(response: AxiosResponse): Promise<string> {
+    protected processCreateUser(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -939,17 +1067,17 @@ export class UserClient {
         }
         if (status === 200) {
             const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
-            return Promise.resolve<string>(result200);
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 409) {
+            const _responseText = response.data;
+            return throwException("User already exists", status, _responseText, _headers);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<void>(null as any);
     }
 
     followUser(username: string | undefined, usernameToFollow: string | undefined, cancelToken?: CancelToken | undefined): Promise<string> {
@@ -1160,6 +1288,124 @@ export class UserClient {
     }
 
     protected processDeleteUser(response: AxiosResponse): Promise<string> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return Promise.resolve<string>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<string>(null as any);
+    }
+
+    publishMessage(message: string | undefined, usernameSender: string | undefined, usernameReceiver: string | undefined, cancelToken?: CancelToken | undefined): Promise<number> {
+        let url_ = this.baseUrl + "/api/User/PublishMessage?";
+        if (message === null)
+            throw new Error("The parameter 'message' cannot be null.");
+        else if (message !== undefined)
+            url_ += "message=" + encodeURIComponent("" + message) + "&";
+        if (usernameSender === null)
+            throw new Error("The parameter 'usernameSender' cannot be null.");
+        else if (usernameSender !== undefined)
+            url_ += "usernameSender=" + encodeURIComponent("" + usernameSender) + "&";
+        if (usernameReceiver === null)
+            throw new Error("The parameter 'usernameReceiver' cannot be null.");
+        else if (usernameReceiver !== undefined)
+            url_ += "usernameReceiver=" + encodeURIComponent("" + usernameReceiver) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processPublishMessage(_response);
+        });
+    }
+
+    protected processPublishMessage(response: AxiosResponse): Promise<number> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return Promise.resolve<number>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    receiveMessage(usernameSender: string | undefined, usernameReceiver: string | undefined, cancelToken?: CancelToken | undefined): Promise<string> {
+        let url_ = this.baseUrl + "/api/User/ReceiveMessage?";
+        if (usernameSender === null)
+            throw new Error("The parameter 'usernameSender' cannot be null.");
+        else if (usernameSender !== undefined)
+            url_ += "usernameSender=" + encodeURIComponent("" + usernameSender) + "&";
+        if (usernameReceiver === null)
+            throw new Error("The parameter 'usernameReceiver' cannot be null.");
+        else if (usernameReceiver !== undefined)
+            url_ += "usernameReceiver=" + encodeURIComponent("" + usernameReceiver) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processReceiveMessage(_response);
+        });
+    }
+
+    protected processReceiveMessage(response: AxiosResponse): Promise<string> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {

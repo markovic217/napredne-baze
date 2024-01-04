@@ -1,65 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using APITest;
 
-namespace APITest
+namespace APITest.Server
 {
     [TestFixture]
-    internal class PostValidationTest
+    internal class UserValidationTest
     {
-        int suffix;
-        int postId;
         HttpClient client;
-        string date;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
-            suffix = rnd.Next();
-            date = DateTime.Now.ToString("yyyy-MM-dd");
-
-            client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/Post/") };
+            client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/User/") };
         }
 
         [Test, Order(1)]
-        [TestCase(Description = "CreatePost Test")]
+        [TestCase(Description = "PostUser Test")]
         public void TestPost()
         {
-            using HttpResponseMessage response = client.PostAsync($"CreatePost?", null).Result;
+            Trace.WriteLine("PostUser Test:");
+            using HttpResponseMessage response = client.PostAsync($"CreateUser", null).Result;
+
             ResponseContent.ShowResponseContent(response);
+
             if (response.StatusCode != HttpStatusCode.BadRequest)
                 Assert.Fail();
         }
 
         [Test, Order(2)]
-        [TestCase(Description = "GetPosts Test")]
+        [TestCase(Description = "GetUser Test")]
         public void TestGet()
         {
-            using HttpResponseMessage response = client.GetAsync($"GetPosts").Result;
+            Trace.WriteLine("GetUser Test:");
+            using HttpResponseMessage response = client.GetAsync($"GetUser").Result;
+
             ResponseContent.ShowResponseContent(response);
+
             if (response.StatusCode != HttpStatusCode.BadRequest)
                 Assert.Fail();
         }
 
         [Test, Order(3)]
-        [TestCase(Description = "UpdatePost Test")]
+        [TestCase(Description = "UpdateUser Test")]
         public void TestUpdate()
         {
-            using HttpResponseMessage response = client.PatchAsync($"UpdatePost?", null).Result;
+            Trace.WriteLine("UpdateUser Test:");
+            using HttpResponseMessage response = client.PatchAsync($"UpdateUser", null).Result;
+
             ResponseContent.ShowResponseContent(response);
+
             if (response.StatusCode != HttpStatusCode.BadRequest)
                 Assert.Fail();
         }
 
         [Test, Order(4)]
-        [TestCase(Description = "DeletePost Test")]
+        [TestCase(Description = "DeleteUser Test")]
         public void TestDelete()
         {
-            using HttpResponseMessage response = client.DeleteAsync($"DeletePost?").Result;
+            Trace.WriteLine("DeleteUser Test:");
+            using HttpResponseMessage response = client.DeleteAsync($"DeleteUser").Result;
+
+            ResponseContent.ShowResponseContent(response);
 
             if (response.StatusCode != HttpStatusCode.BadRequest)
                 Assert.Fail();

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 using ServiceStack.Redis;
+using SocialAppServer.Config;
 using SocialAppServer.Models;
 using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Annotations;

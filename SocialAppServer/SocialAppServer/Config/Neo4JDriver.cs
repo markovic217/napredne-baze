@@ -1,6 +1,6 @@
 ﻿using Neo4j.Driver;
 
-namespace SocialAppServer
+namespace SocialAppServer.Config
 {
     public static class Neo4JDriver
     {

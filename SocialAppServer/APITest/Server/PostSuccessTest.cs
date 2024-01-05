@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SocialAppServer.Models;
 
 namespace APITest.Server
 {
@@ -62,7 +63,7 @@ namespace APITest.Server
                 .GetAsync($"GetPosts?username=testUsername{suffix}")
                 .Result;
 
-            var post = ResponseContent.GetPostObject(response);
+            var post = ResponseContent.GetResponseObject<Post[]>(response);
             postId = post[0].Id;
             Trace.WriteLine(post[0].ToString());
 

@@ -1,4 +1,7 @@
-﻿namespace APITest.Server
+﻿using Microsoft.AspNetCore.Mvc;
+using SocialAppServer.Models;
+
+namespace APITest.Server
 {
     [TestFixture]
     internal class UserSuccessTest
@@ -7,7 +10,7 @@
         HttpClient client;
 
         [OneTimeSetUp]
-        public void Initil()
+        public void SetUp()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
@@ -26,8 +29,14 @@
                 .PostAsync($"CreateUser?{postData}", null)
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("Sign up successful"));
+            }
         }
 
         [Test, Order(2)]
@@ -37,8 +46,27 @@
             using HttpResponseMessage response = client
                 .GetAsync($"GetUser?username=testUsername{suffix}&password=password")
                 .Result;
+
+           
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode}");
+            else
+            {
+                var user = ResponseContent.GetResponseObject<User>(response);
+
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(user.Properties.Username, Is.EqualTo($"testUsername{suffix}"));
+
+                    Assert.That(user.Properties.Name, Is.EqualTo($"testName"));
+
+                    Assert.That(user.Properties.Surname, Is.EqualTo($"testSurname"));
+                    
+                    Assert.That(user.Properties.Password, Is.EqualTo($"password"));
+                });
+            }
         }
 
         [Test, Order(3)]
@@ -51,8 +79,15 @@
             using HttpResponseMessage response = client
                 .PatchAsync($"UpdateUser?{patchData}", null)
                 .Result;
+
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("User data has been updated"));
+            }
         }
 
         [Test, Order(4)]
@@ -62,8 +97,14 @@
             using HttpResponseMessage response = client
                 .DeleteAsync($"DeleteUser?username=newTestUsername{suffix}")
                 .Result;
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("User has been deleted successfully"));
+            }
         }
 
         [OneTimeTearDown]

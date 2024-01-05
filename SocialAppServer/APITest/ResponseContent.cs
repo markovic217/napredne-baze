@@ -30,16 +30,16 @@ namespace APITest
             }
         }
 
-        public static Post[] GetPostObject(HttpResponseMessage response)
+        public static T GetResponseObject<T>(HttpResponseMessage response)
         {
-            var content = response.Content.ReadFromJsonAsync<Post[]>().Result;
+            var content = response.Content.ReadFromJsonAsync<T>().Result;
             return content;
         }
 
-        public static void WriteResponseMessage(HttpResponseMessage response)
+        public static string GetResponseMessage(HttpResponseMessage response)
         {
             var message = response.Content.ReadAsStringAsync().Result;
-            Trace.WriteLine(message);
+            return message;
         }
     }
 }

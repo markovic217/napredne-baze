@@ -1,4 +1,5 @@
-"# napredne-baze" 
+# napredne-baze
+
 Za pokretanje aplikacije treba da se kreiraju i konfigurišu neo4j i redis baze.
 
 ### Neo4j:

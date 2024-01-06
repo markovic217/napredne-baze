@@ -20,7 +20,7 @@ Dodatno u appsettings.json se treba staviti adresa baze:
 ```
 "ApplicationSettings": {
     "Neo4jConnection": "Adresa neo4j baze", //Primer bolt://localhost:7687
-    "RedisConnection": "Docker baze" //Primer localhost:6379
+    "RedisConnection": "Adresa docker baze" //Primer localhost:6379
 }
 ```
 
@@ -39,7 +39,7 @@ Nakon toga u appsettings.json se treba staviti adresa baze:
 ```
 "ApplicationSettings": {
     "Neo4jConnection": "Adresa neo4j baze", //Primer bolt://localhost:7687
-    "RedisConnection": "Docker baze" //Primer localhost:6379
+    "RedisConnection": "Adresa docker baze" //Primer localhost:6379
 }
 ```
 

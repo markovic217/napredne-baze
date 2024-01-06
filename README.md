@@ -44,4 +44,13 @@ Nakon toga u appsettings.json se treba staviti adresa baze:
 }
 ```
 
+### Server:
+
+Server se pokreće jednostavnim klikom na "Run without debugging"
+
+### Web app:
+
+Za pokretanje web aplikacije prvo treba da se pokrene komanda `npm install` a zatim `npm start`
+
+
   

@@ -30,17 +30,14 @@ namespace APITest.Server
         public void TestPost()
         {
             using HttpResponseMessage response = client.PostAsync($"CreatePost?", null).Result;
-            
+
             string message = ResponseContent.GetResponseMessage(response);
 
             ResponseContent.ShowResponseContent(response);
 
-
             if (response.StatusCode != HttpStatusCode.BadRequest)
                 Assert.Fail($"Code: {response.StatusCode} - {message}");
-
-            
-            }
+        }
 
         [Test, Order(2)]
         [TestCase(Description = "GetPosts Test")]

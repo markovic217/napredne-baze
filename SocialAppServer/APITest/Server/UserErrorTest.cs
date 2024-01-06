@@ -9,7 +9,7 @@
         [OneTimeSetUp]
         public void SetUp()
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
+            //Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
             suffix = rnd.Next();
             client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/User/") };
@@ -38,8 +38,7 @@
             string message = ResponseContent.GetResponseMessage(response);
 
             if (response.StatusCode != HttpStatusCode.Conflict)
-            Assert.Fail($"Code: {response.StatusCode} - {message}");
-  
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
         }
 
         [Test, Order(2)]
@@ -50,7 +49,6 @@
                 .GetAsync($"GetUser?username=notFoundUsername{suffix}&password=password")
                 .Result;
 
-
             string message = ResponseContent.GetResponseMessage(response);
 
             if (response.StatusCode != HttpStatusCode.NotFound)
@@ -59,7 +57,6 @@
             {
                 Assert.That(message, Is.EqualTo("User has not been found"));
             }
-            
         }
 
         [Test, Order(3)]
@@ -90,7 +87,7 @@
             using HttpResponseMessage response = client
                 .DeleteAsync($"DeleteUser?username=notFoundUsername{suffix}")
                 .Result;
-            
+
             string message = ResponseContent.GetResponseMessage(response);
 
             if (response.StatusCode != HttpStatusCode.NotFound)
@@ -110,13 +107,12 @@
 
             string message = ResponseContent.GetResponseMessage(response);
 
-            if (response.StatusCode != HttpStatusCode.NotFound)
+            if (response.StatusCode != HttpStatusCode.OK)
                 Assert.Fail($"Code: {response.StatusCode} - {message}");
             else
             {
                 Assert.That(message, Is.EqualTo("User has been deleted successfully"));
             }
-
         }
     }
 }

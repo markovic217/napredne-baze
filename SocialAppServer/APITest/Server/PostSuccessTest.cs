@@ -18,10 +18,10 @@ namespace APITest.Server
         [OneTimeSetUp]
         public void SetUp()
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
+            //Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
             suffix = rnd.Next();
-            date = DateTime.Now.ToString("yyyy-MM-dd");
+            date = DateTime.Now.ToString("yyyy-M-d");
             client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/User/") };
 
             string postData =
@@ -31,8 +31,10 @@ namespace APITest.Server
                 .PostAsync($"CreateUser?{postData}", null)
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
 
             client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/Post/") };
         }
@@ -41,64 +43,84 @@ namespace APITest.Server
         [TestCase(Description = "CreatePost Test")]
         public void TestPost()
         {
-            Trace.WriteLine("TestPost:");
-
             string postData = $"username=testUsername{suffix}&text=testText&date={date}";
 
             using HttpResponseMessage response = client
                 .PostAsync($"CreatePost?{postData}", null)
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("Post has been created successfully!"));
+            }
         }
 
         [Test, Order(2)]
         [TestCase(Description = "GetPosts Test")]
         public void TestGet()
         {
-            Trace.WriteLine("TestGet:");
-
             using HttpResponseMessage response = client
                 .GetAsync($"GetPosts?username=testUsername{suffix}")
                 .Result;
 
             var post = ResponseContent.GetResponseObject<Post[]>(response);
             postId = post[0].Id;
-            Trace.WriteLine(post[0].ToString());
+
+            string message = ResponseContent.GetResponseMessage(response);
 
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(post[0].Properties.Text, Is.EqualTo($"testText"));
+
+                    Assert.That(post[0].Properties.Date, Is.EqualTo($"{date}"));
+                });
+            }
         }
 
         [Test, Order(3)]
         [TestCase(Description = "UpdatePost Test")]
         public void TestUpdate()
         {
-            Trace.WriteLine("TestUpdate:");
-
             string patchData = $"username=testUsername{suffix}&postId={postId}&newText=newTestText";
 
             using HttpResponseMessage response = client
                 .PatchAsync($"UpdatePost?{patchData}", null)
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("Post data has been updated"));
+            }
         }
 
         [Test, Order(4)]
         [TestCase(Description = "DeletePost Test")]
         public void TestDelete()
         {
-            Trace.WriteLine("TestDelete:");
-
             using HttpResponseMessage response = client
                 .DeleteAsync($"DeletePost?id={postId}")
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("Post has been deleted!"));
+            }
         }
 
         [OneTimeTearDown]

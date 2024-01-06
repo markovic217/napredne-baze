@@ -10,7 +10,7 @@ namespace APITest.Server
         [OneTimeSetUp]
         public void SetUp()
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
+            //Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
             client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/User/") };
         }
@@ -21,9 +21,9 @@ namespace APITest.Server
         {
             Trace.WriteLine("PostUser Test:");
             using HttpResponseMessage response = client.PostAsync($"CreateUser", null).Result;
-            
+
             string message = ResponseContent.GetResponseMessage(response);
-           
+
             ResponseContent.ShowResponseContent(response);
 
             if (response.StatusCode != HttpStatusCode.BadRequest)

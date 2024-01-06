@@ -18,7 +18,7 @@ namespace APITest.Server
         [OneTimeSetUp]
         public void SetUp()
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
+            //Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
             suffix = rnd.Next();
             date = DateTime.Now.ToString("yyyy-MM-dd");
@@ -31,8 +31,10 @@ namespace APITest.Server
                 .PostAsync($"CreateUser?{postData}", null)
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (!response.IsSuccessStatusCode)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
 
             client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/Post/") };
         }
@@ -47,8 +49,14 @@ namespace APITest.Server
                 .PostAsync($"CreatePost?{postData}", null)
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (response.StatusCode != HttpStatusCode.NotFound)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("User has not been found"));
+            }
         }
 
         [Test, Order(2)]
@@ -59,8 +67,14 @@ namespace APITest.Server
                 .GetAsync($"GetPosts?username=errorTestUsername{suffix}")
                 .Result;
 
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (response.StatusCode != HttpStatusCode.NotFound)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("User has not been found"));
+            }
         }
 
         [Test, Order(3)]
@@ -72,8 +86,18 @@ namespace APITest.Server
             using HttpResponseMessage response = client
                 .PatchAsync($"UpdatePost?{patchData}", null)
                 .Result;
+
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (response.StatusCode != HttpStatusCode.NotFound)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(
+                    message,
+                    Is.AnyOf(new[] { "User has not been found", "Post has not been found" })
+                );
+            }
         }
 
         [Test, Order(4)]
@@ -81,8 +105,15 @@ namespace APITest.Server
         public void TestDelete()
         {
             using HttpResponseMessage response = client.DeleteAsync($"DeletePost?id={-1}").Result;
+
+            string message = ResponseContent.GetResponseMessage(response);
+
             if (response.StatusCode != HttpStatusCode.NotFound)
-                Assert.Fail();
+                Assert.Fail($"Code: {response.StatusCode} - {message}");
+            else
+            {
+                Assert.That(message, Is.EqualTo("Post has not been found"));
+            }
         }
 
         [OneTimeTearDown]

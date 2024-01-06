@@ -12,7 +12,7 @@ namespace APITest.Server
         [OneTimeSetUp]
         public void SetUp()
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
+            //Trace.Listeners.Add(new ConsoleTraceListener());
             Random rnd = new Random();
             suffix = rnd.Next();
             client = new HttpClient() { BaseAddress = new Uri("https://localhost:7049/api/User/") };
@@ -47,14 +47,11 @@ namespace APITest.Server
                 .GetAsync($"GetUser?username=testUsername{suffix}&password=password")
                 .Result;
 
-           
-
             if (!response.IsSuccessStatusCode)
                 Assert.Fail($"Code: {response.StatusCode}");
             else
             {
                 var user = ResponseContent.GetResponseObject<User>(response);
-
 
                 Assert.Multiple(() =>
                 {
@@ -63,7 +60,7 @@ namespace APITest.Server
                     Assert.That(user.Properties.Name, Is.EqualTo($"testName"));
 
                     Assert.That(user.Properties.Surname, Is.EqualTo($"testSurname"));
-                    
+
                     Assert.That(user.Properties.Password, Is.EqualTo($"password"));
                 });
             }

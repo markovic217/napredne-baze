@@ -135,7 +135,7 @@ namespace SocialAppServer.Controllers
             var records = new List<object>();
             var session = _driver.AsyncSession();
             IResultCursor results = await session.RunAsync(
-                $"MATCH (u:User {{username: '{username}'}})-[relF:FOLLOWS]->(uf:User)-[relP:POSTED]->(post:Post) RETURN post.date as date, post.text as text, uf.username as username ORDER BY post.date DESC SKIP {offset} LIMIT 5 "
+                $"MATCH (u:User {{username: '{username}'}})-[relF:FOLLOWS]->(uf:User)-[relP:POSTED]->(post:Post) RETURN ID(post) as id, post.date as date, post.text as text, uf.username as username ORDER BY post.date DESC SKIP {offset} LIMIT 5 "
             );
             while (await results.FetchAsync())
             {

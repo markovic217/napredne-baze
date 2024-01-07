@@ -130,7 +130,9 @@ const Profile: FC<ProfileProps> = ({ isYourProfile }) => {
                     Follow
                   </Button>
                 )}
-                <Button variant="contained">Message</Button>
+                  <Button variant="contained" onClick={() => {
+                    navigate('../inbox')
+                }}>Message</Button>
               </>
             )}
             <Grid

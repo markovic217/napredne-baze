@@ -21,11 +21,13 @@ const HomePage: FC<HomePage> = () => {
         loggedUser.username,
         offset
       );
+      
       if (postsTemp.length <= offset) setMorePosts(false);
       setPosts((prev) => [...prev, ...postsTemp]);
-
+      console.log(postsTemp)
     };
     fetch();
+    
   }, [sort, offset, loggedUser]);
 
   return (
@@ -49,11 +51,10 @@ const HomePage: FC<HomePage> = () => {
           description={post.text}
           userAnswered={post.username}
           postId={post.id}
-          userId={0}
-          handleDelete={() => {}}
           key={post.id}
         />
-      ))}
+      ))
+}
       {morePosts && (
         <Button
           onClick={() => {

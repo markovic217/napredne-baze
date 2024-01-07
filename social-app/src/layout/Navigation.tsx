@@ -75,7 +75,8 @@ const Navigation: FC<NavigationProps> = () => {
             minHeight: "80px",
           }}
         >
-          <Link
+          {loggedUser.isLogged &&
+            <Link
             variant="h5"
             underline="none"
             onClick={() => {
@@ -83,7 +84,7 @@ const Navigation: FC<NavigationProps> = () => {
             }}
           >
             SocialApp
-          </Link>
+          </Link>}
           {loggedUser.isLogged && (
             <Box>
               <TextField
@@ -120,7 +121,7 @@ const Navigation: FC<NavigationProps> = () => {
             </Box>
           )}
           <Box sx={{ display: "flex", position: "relative" }}>
-            <Link
+            {loggedUser.isLogged && <Link
               variant="h6"
               underline="none"
               marginRight="20px"
@@ -131,6 +132,7 @@ const Navigation: FC<NavigationProps> = () => {
             >
               Home
             </Link>
+            }
             {loggedUser?.isLogged ? (
               <IconButton
                 id="basic-button"

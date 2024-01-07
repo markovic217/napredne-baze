@@ -20,7 +20,6 @@ namespace SocialAppServer.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-
         private readonly IDriver _driver;
         RedisClient redisClient;
 

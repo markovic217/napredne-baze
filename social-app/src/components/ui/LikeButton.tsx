@@ -46,7 +46,7 @@ const LikeButton: FC<LikeButtonProps> = ({ postId, initialLikes }) => {
           onClick={async () => {
             await postClient.unlikePost(loggedUser.username, postId);
             setLiked(false);
-            setNumberOfLikes(numberOfLikes - 1);
+            setNumberOfLikes(prev => prev - 1);
           }}
           // sx={{ marginBottom: "15px" }}
         >
@@ -54,10 +54,13 @@ const LikeButton: FC<LikeButtonProps> = ({ postId, initialLikes }) => {
         </IconButton>
       ) : (
         <IconButton
-          onClick={async () => {
+            onClick={async () => {
+              console.log(postId)
             await postClient.likePost(loggedUser.username, postId);
             setLiked(true);
-            setNumberOfLikes(numberOfLikes + 1);
+              setNumberOfLikes(prev => prev + 1);
+              console.log('Liked')
+
           }}
         >
           <FavoriteBorderIcon fontSize="large" color="disabled" />

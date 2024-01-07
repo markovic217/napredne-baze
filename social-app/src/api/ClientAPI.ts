@@ -1512,6 +1512,7 @@ export interface IPostProperties {
 }
 
 export class PostWithUser implements IPostWithUser {
+    id?: number;
     text?: string;
     date?: string;
     username?: string;
@@ -1527,6 +1528,7 @@ export class PostWithUser implements IPostWithUser {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.text = _data["text"];
             this.date = _data["date"];
             this.username = _data["username"];
@@ -1542,6 +1544,7 @@ export class PostWithUser implements IPostWithUser {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["text"] = this.text;
         data["date"] = this.date;
         data["username"] = this.username;
@@ -1550,6 +1553,7 @@ export class PostWithUser implements IPostWithUser {
 }
 
 export interface IPostWithUser {
+    id?: number;
     text?: string;
     date?: string;
     username?: string;

@@ -4,11 +4,9 @@ import LikeButton from "./LikeButton";
 
 interface PostCardProps {
   postId: number;
-  userId: number;
   userAnswered: string;
   description: string;
   dateCreated: string;
-  handleDelete: () => void;
 }
 
 const PostCard: FC<PostCardProps> = ({

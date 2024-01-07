@@ -16,6 +16,7 @@ project.lock.json
 *.sln.docstates
 secrets.json
 
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -27,6 +28,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+Videos/
 msbuild.log
 msbuild.err
 msbuild.wrn

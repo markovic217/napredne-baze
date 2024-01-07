@@ -6,8 +6,6 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Azure;
-using Neo4j.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SocialAppServer.Models;

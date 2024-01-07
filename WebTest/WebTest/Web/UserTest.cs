@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using ServiceStack;
-using SocialAppServer.Models;
+//using ServiceStack;
+//using SocialAppServer.Models;
 
 namespace APITest.Web
 {
